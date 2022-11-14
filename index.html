@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+       <head>
+         <h1> <b>PROCESSING PLANTS </b> </h1>    
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+              
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <style>
+        body {
+    padding: 0;
+    margin: 0;
+}
+html, body, #map {
+    height: 100%;
+    width: 100%;
+}
+        </style>
+        <title></title>
+    </head>
+    <body>
+        
+        <div id="map"> 
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet-svg-shape-markers.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/KERALASTATEBOUNDARY_2.js"></script>
+        <script src="data/PROCESSINGPLANTS_3.js"></script>
+        <script>
+              
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix("")
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+        }
+        map.createPane('pane_GoogleSatellite_0');
+        map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
+        var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_GoogleSatellite_0;
+        map.addLayer(layer_GoogleSatellite_0);
+        map.createPane('pane_GoogleMaps_1');
+        map.getPane('pane_GoogleMaps_1').style.zIndex = 401;
+        var layer_GoogleMaps_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleMaps_1',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_GoogleMaps_1;
+        map.addLayer(layer_GoogleMaps_1);
+        function pop_KERALASTATEBOUNDARY_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['dtname'] !== null ? autolinker.link(feature.properties['dtname'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['stname'] !== null ? autolinker.link(feature.properties['stname'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['stcode11'] !== null ? autolinker.link(feature.properties['stcode11'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['dtcode11'] !== null ? autolinker.link(feature.properties['dtcode11'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['year_stat'] !== null ? autolinker.link(feature.properties['year_stat'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Dist_LGD'] !== null ? autolinker.link(feature.properties['Dist_LGD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['State_LGD'] !== null ? autolinker.link(feature.properties['State_LGD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['JID'] !== null ? autolinker.link(feature.properties['JID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_KERALASTATEBOUNDARY_2_0() {
+            return {
+                pane: 'pane_KERALASTATEBOUNDARY_2',
+                opacity: 1,
+                color: 'rgba(15,4,8,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_KERALASTATEBOUNDARY_2');
+        map.getPane('pane_KERALASTATEBOUNDARY_2').style.zIndex = 402;
+        map.getPane('pane_KERALASTATEBOUNDARY_2').style['mix-blend-mode'] = 'normal';
+        var layer_KERALASTATEBOUNDARY_2 = new L.geoJson(json_KERALASTATEBOUNDARY_2, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_KERALASTATEBOUNDARY_2',
+            layerName: 'layer_KERALASTATEBOUNDARY_2',
+            pane: 'pane_KERALASTATEBOUNDARY_2',
+            onEachFeature: pop_KERALASTATEBOUNDARY_2,
+            style: style_KERALASTATEBOUNDARY_2_0,
+        });
+        bounds_group.addLayer(layer_KERALASTATEBOUNDARY_2);
+        map.addLayer(layer_KERALASTATEBOUNDARY_2);
+        function pop_PROCESSINGPLANTS_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>NAME</strong><br />' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESS</strong><br />' + (feature.properties['ADDRESS'] !== null ? autolinker.link(feature.properties['ADDRESS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>LATITUDE</strong><br />' + (feature.properties['LATITUDE'] !== null ? autolinker.link(feature.properties['LATITUDE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>LONGITUDE</strong><br />' + (feature.properties['LONGITUDE'] !== null ? autolinker.link(feature.properties['LONGITUDE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_PROCESSINGPLANTS_3_0() {
+            return {
+                pane: 'pane_PROCESSINGPLANTS_3',
+                radius: 6.399999999999999,
+                opacity: 1,
+                color: 'rgba(56,153,243,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_PROCESSINGPLANTS_3');
+        map.getPane('pane_PROCESSINGPLANTS_3').style.zIndex = 403;
+        map.getPane('pane_PROCESSINGPLANTS_3').style['mix-blend-mode'] = 'normal';
+        var layer_PROCESSINGPLANTS_3 = new L.geoJson(json_PROCESSINGPLANTS_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PROCESSINGPLANTS_3',
+            layerName: 'layer_PROCESSINGPLANTS_3',
+            pane: 'pane_PROCESSINGPLANTS_3',
+            onEachFeature: pop_PROCESSINGPLANTS_3,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_PROCESSINGPLANTS_3_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_PROCESSINGPLANTS_3);
+        map.addLayer(layer_PROCESSINGPLANTS_3);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/PROCESSINGPLANTS_3.png" />  PROCESSING PLANTS': layer_PROCESSINGPLANTS_3,'<img src="legend/KERALASTATEBOUNDARY_2.png" /> KERALA STATE BOUNDARY': layer_KERALASTATEBOUNDARY_2,"Google Maps": layer_GoogleMaps_1,"Google Satellite ": layer_GoogleSatellite_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"NAME": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+        document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_NAME = document.createElement('div');
+            div_NAME.id = "div_NAME";
+            div_NAME.className= "filterselect";
+            document.getElementById("menu").appendChild(div_NAME);
+            sel_NAME = document.createElement('select');
+            sel_NAME.multiple = true;
+            sel_NAME.size = 10;
+            sel_NAME.id = "sel_NAME";
+            var NAME_options_str = "<option value='' unselected></option>";
+            sel_NAME.onchange = function(){filterFunc()};
+            NAME_options_str  += '<option value="A M FISHERIES">A M FISHERIES</option>';
+            NAME_options_str  += '<option value="A S MARINE INDUSTRIES PRIVATE LIMITED">A S MARINE INDUSTRIES PRIVATE LIMITED</option>';
+            NAME_options_str  += '<option value="ABAD FISHERIES PVT LTD">ABAD FISHERIES PVT LTD</option>';
+            NAME_options_str  += '<option value="ABM Marine Products">ABM Marine Products</option>';
+            NAME_options_str  += '<option value="AI Marine Products India Private Limited">AI Marine Products India Private Limited</option>';
+            NAME_options_str  += '<option value="AL BADR SEAFOODS PVT LTD">AL BADR SEAFOODS PVT LTD</option>';
+            NAME_options_str  += '<option value="AL BADR SEAFOODS PVT.LTD UNIT II">AL BADR SEAFOODS PVT.LTD UNIT II</option>';
+            NAME_options_str  += '<option value="ANCHUTHARA FOOD PRODUCTS">ANCHUTHARA FOOD PRODUCTS</option>';
+            NAME_options_str  += '<option value="AQUA GENO EXIM">AQUA GENO EXIM</option>';
+            NAME_options_str  += '<option value="ARBEE AQUATIC PROTEINS PVT LTD">ARBEE AQUATIC PROTEINS PVT LTD</option>';
+            NAME_options_str  += '<option value="ASIAN MARINE FOODS">ASIAN MARINE FOODS</option>';
+            NAME_options_str  += '<option value="AVLA NETTOS EXPORTS">AVLA NETTOS EXPORTS</option>';
+            NAME_options_str  += '<option value="Abad Exim Pvt Ltd">Abad Exim Pvt Ltd</option>';
+            NAME_options_str  += '<option value="Abad Fisheries Private Limited">Abad Fisheries Private Limited</option>';
+            NAME_options_str  += '<option value="Abad Fisheries Pvt. Ltd.">Abad Fisheries Pvt. Ltd.</option>';
+            NAME_options_str  += '<option value="Accelerated Freeze Drying Co Ltd">Accelerated Freeze Drying Co Ltd</option>';
+            NAME_options_str  += '<option value="Accelerated Freeze Drying Company Limited (Unit 2)">Accelerated Freeze Drying Company Limited (Unit 2)</option>';
+            NAME_options_str  += '<option value="Aqua Sea Food (India) Pvt Ltd">Aqua Sea Food (India) Pvt Ltd</option>';
+            NAME_options_str  += '<option value="Aswin Associates">Aswin Associates</option>';
+            NAME_options_str  += '<option value="BATHSHA MARINE EXPORTS PVT LTD">BATHSHA MARINE EXPORTS PVT LTD</option>';
+            NAME_options_str  += '<option value="BUSTHAN AL WATHANIYA">BUSTHAN AL WATHANIYA</option>';
+            NAME_options_str  += '<option value="Baby Marine International(Unit I)">Baby Marine International(Unit I)</option>';
+            NAME_options_str  += '<option value="Bell Foods(Marine Divison)">Bell Foods(Marine Divison)</option>';
+            NAME_options_str  += '<option value="Bharath Seafoods (Unit I)">Bharath Seafoods (Unit I)</option>';
+            NAME_options_str  += '<option value="CHARLY FISHERIES">CHARLY FISHERIES</option>';
+            NAME_options_str  += '<option value="CHOICE CANNING COMPANY(A Div.of">CHOICE CANNING COMPANY(A Div.of</option>';
+            NAME_options_str  += '<option value="Cap Seafoods Pvt. Ltd.,">Cap Seafoods Pvt. Ltd.,</option>';
+            NAME_options_str  += '<option value="Cherukattu Industries">Cherukattu Industries</option>';
+            NAME_options_str  += '<option value="Cherukattu Industries (Marine Division)">Cherukattu Industries (Marine Division)</option>';
+            NAME_options_str  += '<option value="Cochin Frozen Food Exports Pvt. Ltd">Cochin Frozen Food Exports Pvt. Ltd</option>';
+            NAME_options_str  += '<option value="Delsea Exports Private Ltd">Delsea Exports Private Ltd</option>';
+            NAME_options_str  += '<option value="Dolphin Wires Pvt.Ltd">Dolphin Wires Pvt.Ltd</option>';
+            NAME_options_str  += '<option value="EL TE MARINE PRODUCTS">EL TE MARINE PRODUCTS</option>';
+            NAME_options_str  += '<option value="ELIXIR EXOTIC FOODS AND ALLIED PRODUCTS PVT LTD">ELIXIR EXOTIC FOODS AND ALLIED PRODUCTS PVT LTD</option>';
+            NAME_options_str  += '<option value="EXCELLENT FISHERIES PRIVATE LIMITED">EXCELLENT FISHERIES PRIVATE LIMITED</option>';
+            NAME_options_str  += '<option value="Economic Food Solutions (P) Ltd">Economic Food Solutions (P) Ltd</option>';
+            NAME_options_str  += '<option value="FEBIN MARINE FOODS">FEBIN MARINE FOODS</option>';
+            NAME_options_str  += '<option value="FOODCO DELICIES INDIA (P) LTD">FOODCO DELICIES INDIA (P) LTD</option>';
+            NAME_options_str  += '<option value="Freeze Engineering Industries Pvt.">Freeze Engineering Industries Pvt.</option>';
+            NAME_options_str  += '<option value="Freeze Exim">Freeze Exim</option>';
+            NAME_options_str  += '<option value="Friends Marine Industries">Friends Marine Industries</option>';
+            NAME_options_str  += '<option value="GEO AQUATIC PRODUCTS (P) LTD">GEO AQUATIC PRODUCTS (P) LTD</option>';
+            NAME_options_str  += '<option value="GKS BUSINESS ASSOCIATES (P) LIMITED">GKS BUSINESS ASSOCIATES (P) LIMITED</option>';
+            NAME_options_str  += '<option value="Geo Seafoods">Geo Seafoods</option>';
+            NAME_options_str  += '<option value="Grand Marine Foods">Grand Marine Foods</option>';
+            NAME_options_str  += '<option value="HIC-ABF Special Foods Pvt Ltd">HIC-ABF Special Foods Pvt Ltd</option>';
+            NAME_options_str  += '<option value="HT Foods Private Ltd.,">HT Foods Private Ltd.,</option>';
+            NAME_options_str  += '<option value="Heralad Marine Products Pvt Ltd">Heralad Marine Products Pvt Ltd</option>';
+            NAME_options_str  += '<option value="INDIAN MARINE INDUSTRIES">INDIAN MARINE INDUSTRIES</option>';
+            NAME_options_str  += '<option value="INTERNATIONAL FREEZFISH EXPORTS (UNIT II)">INTERNATIONAL FREEZFISH EXPORTS (UNIT II)</option>';
+            NAME_options_str  += '<option value="India Seafoods">India Seafoods</option>';
+            NAME_options_str  += '<option value="Integrated Rubian Exports Ltd">Integrated Rubian Exports Ltd</option>';
+            NAME_options_str  += '<option value="Interseas">Interseas</option>';
+            NAME_options_str  += '<option value="K M FISHERIES">K M FISHERIES</option>';
+            NAME_options_str  += '<option value="KOLUTHARA EXPORTS LTD">KOLUTHARA EXPORTS LTD</option>';
+            NAME_options_str  += '<option value="Kay Kay Exports">Kay Kay Exports</option>';
+            NAME_options_str  += '<option value="Kerala State Co-operative Federation for Fisheries">Kerala State Co-operative Federation for Fisheries</option>';
+            NAME_options_str  += '<option value="M/S PENVER PRODUCTS LIMITED">M/S PENVER PRODUCTS LIMITED</option>';
+            NAME_options_str  += '<option value="M/S. ASSA SEAFOODS">M/S. ASSA SEAFOODS</option>';
+            NAME_options_str  += '<option value="M/S.EMINENT SEAFOODS PVTLTD">M/S.EMINENT SEAFOODS PVTLTD</option>';
+            NAME_options_str  += '<option value="M/s NAS FISHERIES PRIVATE LIMITED">M/s NAS FISHERIES PRIVATE LIMITED</option>';
+            NAME_options_str  += '<option value="M/s SEABOY FISHERIES PVT. LTD.">M/s SEABOY FISHERIES PVT. LTD.</option>';
+            NAME_options_str  += '<option value="M/s. Capithan Exporting Company">M/s. Capithan Exporting Company</option>';
+            NAME_options_str  += '<option value="M/s. Indian Aquatic Products">M/s. Indian Aquatic Products</option>';
+            NAME_options_str  += '<option value="M/s. Kings Marine Products">M/s. Kings Marine Products</option>';
+            NAME_options_str  += '<option value="M/s. Kings Seafoods">M/s. Kings Seafoods</option>';
+            NAME_options_str  += '<option value="M/s. Mangala Marine Exim India Private Limited (Unit-1 Mangala Sea Products)">M/s. Mangala Marine Exim India Private Limited (Unit-1 Mangala Sea Products)</option>';
+            NAME_options_str  += '<option value="M/s. Poyilakada Fisheries P Ltd.,">M/s. Poyilakada Fisheries P Ltd.,</option>';
+            NAME_options_str  += '<option value="M/s. Premier Marine Foods">M/s. Premier Marine Foods</option>';
+            NAME_options_str  += '<option value="M/s. Rabia Seafoods">M/s. Rabia Seafoods</option>';
+            NAME_options_str  += '<option value="M/s. VERONICA MARINE EXPORTS PVT LTD">M/s. VERONICA MARINE EXPORTS PVT LTD</option>';
+            NAME_options_str  += '<option value="M/s.Mangala Marine Exim Indiia Pvt. Ltd - (Unit II Bhatsons Aquatic Products)">M/s.Mangala Marine Exim Indiia Pvt. Ltd - (Unit II Bhatsons Aquatic Products)</option>';
+            NAME_options_str  += '<option value="MARKSMEN MARINE PRODUCTS PRIVATE LIMITED">MARKSMEN MARINE PRODUCTS PRIVATE LIMITED</option>';
+            NAME_options_str  += '<option value="Mangala Marine Exim India Pvt. Ltd. (Unit V)">Mangala Marine Exim India Pvt. Ltd. (Unit V)</option>';
+            NAME_options_str  += '<option value="Mangala Seafoods">Mangala Seafoods</option>';
+            NAME_options_str  += '<option value="Marine Hydrocolloids (Agar Agar Pla">Marine Hydrocolloids (Agar Agar Pla</option>';
+            NAME_options_str  += '<option value="Monsun Foods Pvt Ltd">Monsun Foods Pvt Ltd</option>';
+            NAME_options_str  += '<option value="Moon Fishery (India) Pvt. Ltd.,">Moon Fishery (India) Pvt. Ltd.,</option>';
+            NAME_options_str  += '<option value="Mukkad,">Mukkad,</option>';
+            NAME_options_str  += '<option value="National Seafoods Company">National Seafoods Company</option>';
+            NAME_options_str  += '<option value="Ocean Wealth Exports">Ocean Wealth Exports</option>';
+            NAME_options_str  += '<option value="PREMIER MARINE ENTERPRISES">PREMIER MARINE ENTERPRISES</option>';
+            NAME_options_str  += '<option value="PREMIER SEAFOODS EXIM PRIVATE LIMITED">PREMIER SEAFOODS EXIM PRIVATE LIMITED</option>';
+            NAME_options_str  += '<option value="Paragon Sea Foods Pvt. Ltd.,">Paragon Sea Foods Pvt. Ltd.,</option>';
+            NAME_options_str  += '<option value="Parayil Food Products Pvt. Ltd.,">Parayil Food Products Pvt. Ltd.,</option>';
+            NAME_options_str  += '<option value="Premier Exports International">Premier Exports International</option>';
+            NAME_options_str  += '<option value="Profand Vayalat Marine Exports Pvt">Profand Vayalat Marine Exports Pvt</option>';
+            NAME_options_str  += '<option value="QFROZ TRADES PRIVATE LIMITED">QFROZ TRADES PRIVATE LIMITED</option>';
+            NAME_options_str  += '<option value="R F Exports">R F Exports</option>';
+            NAME_options_str  += '<option value="ROYAL OCEANS">ROYAL OCEANS</option>';
+            NAME_options_str  += '<option value="S H Marine Exim">S H Marine Exim</option>';
+            NAME_options_str  += '<option value="SAFERA FOOD INTERNATIONAL">SAFERA FOOD INTERNATIONAL</option>';
+            NAME_options_str  += '<option value="SAN MARINE EXPORTS">SAN MARINE EXPORTS</option>';
+            NAME_options_str  += '<option value="SLS EXPORTS PVT LTD">SLS EXPORTS PVT LTD</option>';
+            NAME_options_str  += '<option value="STAR FISH EXPORTS">STAR FISH EXPORTS</option>';
+            NAME_options_str  += '<option value="SUN AQUATIC PRODUCTS PVT. LTD.">SUN AQUATIC PRODUCTS PVT. LTD.</option>';
+            NAME_options_str  += '<option value="Seafood Innovations">Seafood Innovations</option>';
+            NAME_options_str  += '<option value="Seafresh Exports Ltd">Seafresh Exports Ltd</option>';
+            NAME_options_str  += '<option value="Silver Star Seafoods Ltd.,">Silver Star Seafoods Ltd.,</option>';
+            NAME_options_str  += '<option value="The canning Industries Cochin Ltd.,">The canning Industries Cochin Ltd.,</option>';
+            NAME_options_str  += '<option value="Torry Harris Seafoods Private Ltd.,">Torry Harris Seafoods Private Ltd.,</option>';
+            NAME_options_str  += '<option value="U&CO MARINE EXPORTS">U&CO MARINE EXPORTS</option>';
+            NAME_options_str  += '<option value="Uniroyal Marine Exports Ltd.,">Uniroyal Marine Exports Ltd.,</option>';
+            NAME_options_str  += '<option value="V T J MARINE">V T J MARINE</option>';
+            sel_NAME.innerHTML = NAME_options_str;
+            div_NAME.appendChild(sel_NAME);
+            var lab_NAME = document.createElement('div');
+            lab_NAME.innerHTML = 'NAME';
+            lab_NAME.className = 'filterlabel';
+            div_NAME.appendChild(lab_NAME);
+            var reset_NAME = document.createElement('div');
+            reset_NAME.innerHTML = 'clear filter';
+            reset_NAME.className = 'filterlabel';
+            reset_NAME.onclick = function() {
+                var options = document.getElementById("sel_NAME").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_NAME.appendChild(reset_NAME);  
+        </script>
+    </body>
+</html>
+
